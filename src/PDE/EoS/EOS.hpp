@@ -406,9 +406,57 @@ class EOS {
 
           else if constexpr( std::is_same_v< Fn, viscCoeff > )
             return m_material.wilkinsAluminum.viscCoeff( std::forward< Args >( args )... );
-        };
-        return 0;
+        }
+        else if (type == EOSType::LinearMieGruneisen) {
+          if constexpr( std::is_same_v< Fn, density > )
+            return m_material.linearMieGruneisen.density( std::forward< Args >( args )... );
 
+          else if constexpr( std::is_same_v< Fn, pressure > )
+            return m_material.linearMieGruneisen.pressure( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, pressure_coldcompr > )
+            return m_material.linearMieGruneisen.pressure_coldcompr( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, soundspeed > )
+            return m_material.linearMieGruneisen.soundspeed( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, shearspeed > )
+            return m_material.linearMieGruneisen.shearspeed( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, totalenergy > )
+            return m_material.linearMieGruneisen.totalenergy( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, temperature > )
+            return m_material.linearMieGruneisen.temperature( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, min_eff_pressure > )
+            return m_material.linearMieGruneisen.min_eff_pressure( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, refDensity > )
+            return m_material.linearMieGruneisen.refDensity( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, refPressure > )
+            return m_material.linearMieGruneisen.refPressure( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, rho0 > )
+            return m_material.linearMieGruneisen.rho0( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, gas_constant > )
+            return m_material.linearMieGruneisen.gas_constant( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, internalenergy > )
+            return m_material.linearMieGruneisen.internalenergy( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, cv > )
+            return m_material.linearMieGruneisen.cv( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, cp > )
+            return m_material.linearMieGruneisen.cp( std::forward< Args >( args )... );
+
+          else if constexpr( std::is_same_v< Fn, viscCoeff > )
+            return m_material.linearMieGruneisen.viscCoeff( std::forward< Args >( args )... );
+        }
+        return 0;
     }
 
     //! Entry method tags for specific EOS classes to use with computeTensor()
@@ -446,7 +494,11 @@ class EOS {
           if constexpr(std::is_same_v<Fn, CauchyStress>)
             return m_material.wilkinsAluminum.CauchyStress( std::forward< Args >( args )... );
         }
-
+        else if (type == EOSType::LinearMieGruneisen) {
+          if constexpr(std::is_same_v<Fn, CauchyStress>)
+            return m_material.linearMieGruneisen.CauchyStress( std::forward< Args >( args )... );
+        }
+        return {{}};
     }
 
     //! Entry method tags for specific EOS classes to use with set()
@@ -460,28 +512,32 @@ class EOS {
     template< typename Fn, typename... Args >
     void set( Args&&... args ) {
        if (type == EOSType::StiffenedGas) {
-          if constexpr(std::is_same_v<Fn, CauchyStress>)
+          if constexpr(std::is_same_v<Fn, setRho0>)
             return m_material.stiffenedGas.setRho0( std::forward< Args >( args )... );
         }
         else if (type == EOSType::GodunovRomenski) {
-          if constexpr(std::is_same_v<Fn, CauchyStress>)
+          if constexpr(std::is_same_v<Fn, setRho0>)
             return m_material.godunovRomenski.setRho0( std::forward< Args >( args )... );
         }
         else if (type == EOSType::JWL) {
-          if constexpr(std::is_same_v<Fn, CauchyStress>)
+          if constexpr(std::is_same_v<Fn, setRho0>)
             return m_material.jwl.setRho0( std::forward< Args >( args )... );
         }
         else if (type == EOSType::SmallShearSolid) {
-          if constexpr(std::is_same_v<Fn, CauchyStress>)
+          if constexpr(std::is_same_v<Fn, setRho0>)
             return m_material.smallShearSolid.setRho0( std::forward< Args >( args )... );
         }
         else if (type == EOSType::ThermallyPerfectGas) {
-          if constexpr(std::is_same_v<Fn, CauchyStress>)
+          if constexpr(std::is_same_v<Fn, setRho0>)
             return m_material.thermallyPerfectGas.setRho0( std::forward< Args >( args )... );
         }
         else if (type == EOSType::WilkinsAluminum) {
-          if constexpr(std::is_same_v<Fn, CauchyStress>)
+          if constexpr(std::is_same_v<Fn, setRho0>)
             return m_material.wilkinsAluminum.setRho0( std::forward< Args >( args )... );
+        }
+        else if (type == EOSType::LinearMieGruneisen) {
+          if constexpr(std::is_same_v<Fn, setRho0>)
+            return m_material.linearMieGruneisen.setRho0( std::forward< Args >( args )... );
         }
     }
 
@@ -490,7 +546,12 @@ class EOS {
     //! \brief Pack/Unpack serialize member function
     //! \param[in,out] p Charm++'s PUP::er serializer object reference
     void pup(PUP::er &p) {
-    //p | type;  // Serialize the tag first
+    // Serialize the tag and the init-state flag first, so that the switch
+    // below selects the correct union member when unpacking.
+    int t = static_cast< int >( type );
+    p | t;
+    p | m_active;
+    if (p.isUnpacking()) type = static_cast< EOSType >( t );
 
     switch(type) {
         case EOSType::StiffenedGas:
